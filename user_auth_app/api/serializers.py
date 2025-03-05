@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from django.conf import settings
+from users_app.models import CustomUser
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
     repeated_password = serializers.CharField(write_only=True)
     
     class Meta:
-        model = settings.AUTH_USER_MODEL
+        model = CustomUser
         fields = ['email', 'password', 'repeated_password']
         extra_kwargs = {
             'password': {
@@ -21,16 +21,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
         if pw != repeated_pw:
             raise serializers.ValidationError({'error': 'Passwords don\'t match'})
         
-        try:
-            existing_user = settings.AUTH_USER_MODEL.objects.get(email=self.validated_data['email'])
-        except:
-            existing_user = None
-        
-        if existing_user:
-            print('existing User with that email: ', existing_user)
+        if CustomUser.objects.filter(email=self.validated_data['email']).exists():
             raise serializers.ValidationError({'error': 'Email already exists!'})
-        else:
-            account = settings.AUTH_USER_MODEL(email=self.validated_data['email'], username=self.validated_data['username'])
-            account.set_password(pw)
-            account.save()
-            return account
+        
+        account = CustomUser(email=self.validated_data['email'], username=self.validated_data['email'])
+        account.set_password(pw)
+        account.save()
+        return account
