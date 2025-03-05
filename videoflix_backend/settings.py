@@ -49,8 +49,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'videoflix_app',
     'user_auth_app',
+    'users_app',
     'rest_framework'
 ]
+
+AUTH_USER_MODEL = 'users_app.CustomUser'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
