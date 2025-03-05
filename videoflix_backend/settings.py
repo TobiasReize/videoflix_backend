@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'videoflix_app',
     'user_auth_app',
     'users_app',
-    'rest_framework'
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 AUTH_USER_MODEL = 'users_app.CustomUser'
@@ -148,3 +149,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
+    ]
+}
