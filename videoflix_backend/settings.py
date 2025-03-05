@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'videoflix_app',
+    'videoflix_app.apps.VideoflixAppConfig',
     'user_auth_app',
     'users_app',
     'rest_framework',
