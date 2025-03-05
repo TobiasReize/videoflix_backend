@@ -7,6 +7,7 @@ from django.contrib.auth.admin import UserAdmin
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
     add_form = CustomUserCreationForm
+    list_display = ["username", "is_superuser", "is_staff", "last_login", "date_joined"]
     
     fieldsets = (
         *UserAdmin.fieldsets,
