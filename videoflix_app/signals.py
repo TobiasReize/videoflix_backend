@@ -2,7 +2,7 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from .models import Video
 from .tasks import convert_120p, convert_360p, convert_720p, convert_1080p
-import os
+import os, django_rq
 
 
 @receiver(post_save, sender=Video)
@@ -10,10 +10,11 @@ def video_post_save(sender, instance, created, **kwargs):
     print('Video saved')
     if created:
         print('New object created!')
-        convert_120p(instance.video_file.path)
-        convert_360p(instance.video_file.path)
-        convert_720p(instance.video_file.path)
-        convert_1080p(instance.video_file.path)
+        queue = django_rq.get_queue('default', autocommit=True)
+        queue.enqueue(convert_120p, instance.video_file.path)
+        queue.enqueue(convert_360p, instance.video_file.path)
+        queue.enqueue(convert_720p, instance.video_file.path)
+        queue.enqueue(convert_1080p, instance.video_file.path)
 
 
 @receiver(post_delete, sender=Video)
