@@ -5,6 +5,7 @@
 *.venv*
 venv/
 env/
+env_lin/
 
 # Visual Studio Code # 
 .vscode/*
