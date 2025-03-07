@@ -1,8 +1,11 @@
 import subprocess
 from os.path import splitext
+import getpass, os
 
 
 def convert_120p(source):
+    print("Worker läuft als:", getpass.getuser())
+    print(os.environ.get("PATH"))
     base, ext = splitext(source)
     new_file = base + '_120p' + ext
     # cmd = 'C:\\usr\\ffmpeg\\bin\\ffmpeg.exe -i "{}" -s 214x120 -c:v libx264 -crf 23 -c:a aac -strict -2 "{}"'.format(source, new_file)
