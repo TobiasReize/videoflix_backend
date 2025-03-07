@@ -39,9 +39,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -54,11 +56,13 @@ INSTALLED_APPS = [
     'users_app',
     'rest_framework',
     'rest_framework.authtoken',
+    'debug_toolbar',
 ]
 
 AUTH_USER_MODEL = 'users_app.CustomUser'
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -161,6 +165,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
