@@ -39,9 +39,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
+INTERNAL_IPS = ['127.0.0.1']
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -139,30 +138,6 @@ RQ_QUEUES = {
     }
 }
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "rq_console": {
-            "format": "%(asctime)s %(levelname)s %(name)s: %(message)s",
-            "datefmt": "%Y-%m-%d %H:%M:%S",
-        },
-    },
-    "handlers": {
-        "rq_console": {
-            "level": "DEBUG",
-            "class": "logging.StreamHandler",
-            "formatter": "rq_console",
-        },
-    },
-    "loggers": {
-        "rq.worker": {
-            "handlers": ["rq_console"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
-    },
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
