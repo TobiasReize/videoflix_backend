@@ -10,9 +10,10 @@ class Command(BaseCommand):
         dataset = VideoResource().export()
         json_data = dataset.json
         timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = os.path.join('backup', f'{timestamp}_videos_backup.txt')
+        filename = os.path.join('backup', 'backup_files', f'{timestamp}_videos_backup.txt')
         
         with open(filename, 'w') as f:
             f.write(json_data)
 
-        self.stdout.write(self.style.SUCCESS(f'Backup gespeichert als {filename}'))
+        log_message = f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Backup gespeichert als {filename}"
+        self.stdout.write(self.style.SUCCESS(log_message))
