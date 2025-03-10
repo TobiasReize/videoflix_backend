@@ -120,21 +120,21 @@ DATABASES = {
 		'ENGINE': 'django.db.backends.postgresql',
 		'NAME': 'videoflix_db',
 		'USER': 'tobias',
-		'PASSWORD': 'test123',
+		'PASSWORD': os.getenv('DATABASES_PASSWORD'),
 		'HOST': 'localhost',
 		'PORT': '',
 	}
 }
 
 CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
-        "OPTIONS": {
-            "PASSWORD": 'foobared',
-            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': os.getenv('CACHES_LOCATION'),
+        'OPTIONS': {
+            'PASSWORD': os.getenv('CACHES_PASSWORD'),
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient'
         },
-        "KEY_PREFIX": "videoflix"
+        'KEY_PREFIX': 'videoflix'
     }
 }
 
@@ -143,9 +143,9 @@ CACHE_TTL = 60 * 15
 RQ_QUEUES = {
     'default': {
         'HOST': 'localhost',
-        'PORT': 6379,
+        'PORT': os.getenv('RQ_QUEUES_PORT'),
         'DB': 0,
-        'PASSWORD': 'foobared',
+        'PASSWORD': os.getenv('CACHES_PASSWORD'),
         'DEFAULT_TIMEOUT': 360,
     }
 }
@@ -177,7 +177,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Europe/Berlin'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
