@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 
 def send_confirmation_email(username, email):
     subject = 'Confirm your email'
-    from_email = 'info@Videoflix.com'
+    from_email = 'info@videoflix.tobias-reize.de'
     recipient_list = [email]
 
     confirmation_link = 'test'
