@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils.timezone import now
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from .serializers import RegistrationSerializer
 
 
@@ -57,12 +57,13 @@ class CustomLoginView(ObtainAuthToken):
 
 class ActivateUserView(APIView):
     def get(self, request, token):
+        print('token:', token)
         token_obj = get_object_or_404(Token, key=token)
         user = token_obj.user
+        print('user:', user)
 
         if not user.confirmed:
             user.confirmed = True
-            user.save(update_fields=["confirmed"])
-            return Response({"message": "Account successfully activated!"}, status=status.HTTP_200_OK)
-        else:
-            return Response({"message": "Account is already activated."}, status=status.HTTP_400_BAD_REQUEST)
+            user.save(update_fields=['confirmed'])
+        
+        return redirect(f'http://localhost:4200/login?confirmed=true')
