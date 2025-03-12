@@ -40,15 +40,20 @@ class CustomLoginView(ObtainAuthToken):
 
         if serializer.is_valid():
             user = serializer.validated_data['user']
-            user.last_login = now()
-            user.save(update_fields=['last_login'])
-            token, created = Token.objects.get_or_create(user=user)
-            data = {
-                'token': token.key,
-                'email': user.email,
-                'user_id': user.id
-            }
-            resp_status = status.HTTP_200_OK
+            
+            if not user.confirmed:
+                data = {"error": "Your account has not been activated yet!"}
+                resp_status = status.HTTP_403_FORBIDDEN
+            else:
+                user.last_login = now()
+                user.save(update_fields=['last_login'])
+                token, created = Token.objects.get_or_create(user=user)
+                data = {
+                    'token': token.key,
+                    'email': user.email,
+                    'user_id': user.id
+                }
+                resp_status = status.HTTP_200_OK
         else:
             data = serializer.errors
             resp_status = status.HTTP_400_BAD_REQUEST
