@@ -10,19 +10,24 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AddField(
+            model_name='customuser',
+            name='confirmed',
+            field=models.BooleanField(default=False),
+        ),
         migrations.AlterField(
             model_name='customuser',
             name='address',
-            field=models.CharField(blank=True, default='', max_length=150, null=True),
+            field=models.CharField(blank=True, default='', max_length=150),
         ),
         migrations.AlterField(
             model_name='customuser',
             name='custom',
-            field=models.TextField(blank=True, default='', max_length=500, null=True),
+            field=models.TextField(blank=True, default='', max_length=500),
         ),
         migrations.AlterField(
             model_name='customuser',
             name='phone',
-            field=models.CharField(blank=True, default='', max_length=25, null=True),
+            field=models.CharField(blank=True, default='', max_length=25),
         ),
     ]
