@@ -6,7 +6,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.utils.timezone import now
 from django.shortcuts import get_object_or_404, redirect
-from .serializers import RegistrationSerializer
+from .serializers import RegistrationSerializer, ForgotPasswordSerializer
+from ..tasks import send_password_reset_email
+import django_rq
 
 
 class RegistrationView(APIView):
@@ -42,7 +44,7 @@ class CustomLoginView(ObtainAuthToken):
             user = serializer.validated_data['user']
             
             if not user.confirmed:
-                data = {"error": "Your account has not been activated yet!"}
+                data = {'error': 'Your account has not been activated yet!'}
                 resp_status = status.HTTP_403_FORBIDDEN
             else:
                 user.last_login = now()
@@ -71,4 +73,23 @@ class ActivateUserView(APIView):
             user.confirmed = True
             user.save(update_fields=['confirmed'])
         
-        return redirect(f'http://localhost:4200/login?confirmed=true')
+        return redirect('http://localhost:4200/login?confirmed=true')
+
+
+class ForgotPasswordView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = ForgotPasswordSerializer(data=request.data)
+
+        if serializer.is_valid():
+            data = {'response': 'Password reset email has been queued for sending.'}
+            resp_status = status.HTTP_200_OK
+            email = serializer.validated_data['email']
+            queue = django_rq.get_queue('default', autocommit=True)
+            queue.enqueue(send_password_reset_email, email)
+            return Response(data, status=resp_status)
+        else:
+            data = serializer.errors
+            resp_status = status.HTTP_400_BAD_REQUEST
+            return Response(data, status=resp_status)
