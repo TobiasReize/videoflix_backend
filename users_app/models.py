@@ -3,9 +3,9 @@ from django.contrib.auth.models import AbstractUser
 
 
 class CustomUser(AbstractUser):
-    custom = models.TextField(max_length=500, default='')
-    address = models.CharField(max_length=150, default='')
-    phone = models.CharField(max_length=25, default='')
+    custom = models.TextField(max_length=500, default='', blank=True, null=True)
+    address = models.CharField(max_length=150, default='', blank=True, null=True)
+    phone = models.CharField(max_length=25, default='', blank=True, null=True)
 
     def __str__(self):
         return self.username
