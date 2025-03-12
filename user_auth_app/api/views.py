@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils.timezone import now
-
+from django.shortcuts import get_object_or_404
 from .serializers import RegistrationSerializer
 
 
@@ -18,9 +18,7 @@ class RegistrationView(APIView):
 
         if serializer.is_valid():
             saved_account = serializer.save()
-            saved_account.last_login = now()
-            saved_account.save(update_fields=['last_login'])
-            token, created = Token.objects.get_or_create(user=saved_account)
+            token = Token.objects.get(user=saved_account)
             data = {
                 'token': token.key,
                 'email': saved_account.email,
@@ -55,3 +53,16 @@ class CustomLoginView(ObtainAuthToken):
             data = serializer.errors
             resp_status = status.HTTP_400_BAD_REQUEST
         return Response(data, status=resp_status)
+
+
+class ActivateUserView(APIView):
+    def get(self, request, token):
+        token_obj = get_object_or_404(Token, key=token)
+        user = token_obj.user
+
+        if not user.confirmed:
+            user.confirmed = True
+            user.save(update_fields=["confirmed"])
+            return Response({"message": "Account successfully activated!"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Account is already activated."}, status=status.HTTP_400_BAD_REQUEST)
