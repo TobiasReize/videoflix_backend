@@ -119,7 +119,7 @@ DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.postgresql',
 		'NAME': 'videoflix_db',
-		'USER': 'tobias',
+		'USER': os.getenv('DATABASES_USER'),
 		'PASSWORD': os.getenv('DATABASES_PASSWORD'),
 		'HOST': 'localhost',
 		'PORT': '',
