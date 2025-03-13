@@ -39,3 +39,16 @@ class ForgotPasswordSerializer(serializers.ModelSerializer):
         if not CustomUser.objects.filter(email=value).exists():
             raise serializers.ValidationError('User with this email does not exist!')
         return value
+
+
+class ResetPasswordSerializer(serializers.ModelSerializer):
+    new_password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'new_password']
+    
+    def validate_email(self, value):
+        if not CustomUser.objects.filter(email=value).exists():
+            raise serializers.ValidationError('User with this email does not exist!')
+        return value

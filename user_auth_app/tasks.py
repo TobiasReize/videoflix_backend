@@ -20,7 +20,7 @@ def send_password_reset_email(email):
     subject = 'Reset your password'
     from_email = '"Videoflix" <info@videoflix.tobias-reize.de>'
     recipient_list = [email]
-    confirmation_link = f'http://localhost:4200/forgot-password?email={email}'
+    confirmation_link = f'http://localhost:4200/reset-password?email={email}'
 
     text_content = render_to_string('emails/reset_password_email.txt', context={'email': email,'confirmation_link': confirmation_link})
     html_content = render_to_string('emails/reset_password_email.html', context={'email': email, 'confirmation_link': confirmation_link})

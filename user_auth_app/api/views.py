@@ -6,8 +6,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.utils.timezone import now
 from django.shortcuts import get_object_or_404, redirect
-from .serializers import RegistrationSerializer, ForgotPasswordSerializer
+from .serializers import RegistrationSerializer, ForgotPasswordSerializer, ResetPasswordSerializer
 from ..tasks import send_password_reset_email
+from users_app.models import CustomUser
 import django_rq
 
 
@@ -81,13 +82,36 @@ class ForgotPasswordView(APIView):
 
     def post(self, request):
         serializer = ForgotPasswordSerializer(data=request.data)
+        data = {}
 
         if serializer.is_valid():
-            data = {'response': 'Password reset email has been queued for sending.'}
-            resp_status = status.HTTP_200_OK
             email = serializer.validated_data['email']
             queue = django_rq.get_queue('default', autocommit=True)
             queue.enqueue(send_password_reset_email, email)
+            data = {'response': 'Password reset email has been sent.'}
+            resp_status = status.HTTP_200_OK
+            return Response(data, status=resp_status)
+        else:
+            data = serializer.errors
+            resp_status = status.HTTP_400_BAD_REQUEST
+            return Response(data, status=resp_status)
+
+
+class ResetPasswordView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = ResetPasswordSerializer(data=request.data)
+        data = {}
+
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            new_password = serializer.validated_data['new_password']
+            user = CustomUser.objects.get(email=email)
+            user.set_password(new_password)
+            user.save()
+            data = {'response': 'The password has been successfully changed.'}
+            resp_status = status.HTTP_200_OK
             return Response(data, status=resp_status)
         else:
             data = serializer.errors
