@@ -52,13 +52,14 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django_rq',
     'import_export',
+    'corsheaders',
 ]
 
 AUTH_USER_MODEL = 'users_app.CustomUser'
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
