@@ -45,7 +45,9 @@ class CustomLoginView(ObtainAuthToken):
             user = serializer.validated_data['user']
             
             if not user.confirmed:
-                data = {'error': 'Your account has not been activated yet!'}
+                data = {
+                    'msg': ['Your account has not been activated yet!'],
+                }
                 resp_status = status.HTTP_403_FORBIDDEN
             else:
                 user.last_login = now()
