@@ -112,12 +112,8 @@ class ResetPasswordView(APIView):
         data = {}
 
         if serializer.is_valid():
-            email = serializer.validated_data['email']
-            new_password = serializer.validated_data['new_password']
-            user = CustomUser.objects.get(email=email)
-            user.set_password(new_password)
-            user.save()
-            data = {'response': 'The password has been successfully changed.'}
+            user = serializer.save()
+            data = {'response': 'The password has been changed successfully.'}
             resp_status = status.HTTP_200_OK
             return Response(data, status=resp_status)
         else:
