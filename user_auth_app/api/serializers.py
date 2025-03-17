@@ -52,3 +52,9 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
         if not CustomUser.objects.filter(email=value).exists():
             raise serializers.ValidationError('User with this email does not exist!')
         return value
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'email', 'confirmed', 'last_login', 'date_joined']

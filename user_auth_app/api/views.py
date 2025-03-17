@@ -1,4 +1,5 @@
 from rest_framework.views import APIView
+from rest_framework.generics import RetrieveAPIView
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
@@ -6,10 +7,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.utils.timezone import now
 from django.shortcuts import get_object_or_404, redirect
-from .serializers import RegistrationSerializer, ForgotPasswordSerializer, ResetPasswordSerializer
+import django_rq
+from .serializers import RegistrationSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserProfileSerializer
 from ..tasks import send_password_reset_email
 from users_app.models import CustomUser
-import django_rq
 
 
 class RegistrationView(APIView):
@@ -119,3 +120,8 @@ class ResetPasswordView(APIView):
             data = serializer.errors
             resp_status = status.HTTP_400_BAD_REQUEST
             return Response(data, status=resp_status)
+
+
+class UserProfileView(RetrieveAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserProfileSerializer
