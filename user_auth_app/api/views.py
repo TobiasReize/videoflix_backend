@@ -28,7 +28,7 @@ class RegistrationView(APIView):
                 'email': saved_account.email,
                 'user_id': saved_account.id
             }
-            resp_status = status.HTTP_200_OK
+            resp_status = status.HTTP_201_CREATED
         else:
             data = serializer.errors
             resp_status = status.HTTP_400_BAD_REQUEST
@@ -68,8 +68,12 @@ class CustomLoginView(ObtainAuthToken):
 
 class ActivateUserView(APIView):
     def get(self, request, token):
+        try:
+            token_obj = Token.objects.get(key=token)
+        except:
+            return redirect('http://localhost:4200/login?token=false')
+
         print('token:', token)
-        token_obj = get_object_or_404(Token, key=token)
         user = token_obj.user
         print('user:', user)
 

@@ -19,10 +19,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
         repeated_pw = self.validated_data['repeated_password']
 
         if pw != repeated_pw:
-            raise serializers.ValidationError({'error': 'Passwords don\'t match'})
+            raise serializers.ValidationError({'msg': ['Passwords don\'t match']})
         
         if CustomUser.objects.filter(email=self.validated_data['email']).exists():
-            raise serializers.ValidationError({'error': 'Email already exists!'})
+            raise serializers.ValidationError({'msg': ['Email already exists!']})
         
         account = CustomUser(email=self.validated_data['email'], username=self.validated_data['email'])
         account.set_password(pw)
@@ -37,7 +37,7 @@ class ForgotPasswordSerializer(serializers.ModelSerializer):
     
     def validate_email(self, value):
         if not CustomUser.objects.filter(email=value).exists():
-            raise serializers.ValidationError('User with this email does not exist!')
+            raise serializers.ValidationError({'msg': ['User with this email does not exist!']})
         return value
 
 
@@ -50,7 +50,7 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
     
     def validate_email(self, value):
         if not CustomUser.objects.filter(email=value).exists():
-            raise serializers.ValidationError('User with this email does not exist!')
+            raise serializers.ValidationError({'msg': ['User with this email does not exist!']})
         return value
 
 
