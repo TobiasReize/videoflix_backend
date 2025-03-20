@@ -21,3 +21,5 @@ static/
 media/
 backup/
 backup.sh
+.coverage
+htmlcov/

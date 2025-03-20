@@ -34,6 +34,30 @@ class UserAuthTests(APITestCase):
         self.assertEqual(response.data['user_id'], CustomUser.objects.get(email=data['email']).id)
 
 
+    def test_register_wrong_password(self):
+        url = reverse('registration')
+        data = {
+            'email': 'test3@user.de',
+            'password': 'test1234',
+            'repeated_password': 'test12345'
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(CustomUser.objects.count(), 1)
+    
+
+    def test_register_email_exists(self):
+        url = reverse('registration')
+        data = {
+            'email': 'test@user.de',
+            'password': 'test1234',
+            'repeated_password': 'test1234'
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(CustomUser.objects.count(), 1)
+
+
     def test_login_unconfirmed_user(self):
         url = reverse('login')
         data = {
