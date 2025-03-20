@@ -7,9 +7,10 @@ import os, django_rq
 
 @receiver(post_save, sender=Video)
 def video_post_save(sender, instance, created, **kwargs):
-    # print('Video saved')
+    """
+    Converts the video file into different formats using Django-RQ worker.
+    """
     if created:
-        # print('New object created!')
         queue = django_rq.get_queue('default', autocommit=True)
         queue.enqueue(convert_120p, instance.video_file.path)
         queue.enqueue(convert_360p, instance.video_file.path)
@@ -19,6 +20,9 @@ def video_post_save(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=Video)
 def video_post_delete(sender, instance, **kwargs):
+    """
+    Deletes the video file and all converted formats.
+    """
     original_path = instance.video_file.path
     base, ext = os.path.splitext(original_path)
     converted_resolutions = ['_120p', '_360p', '_720p', '_1080p']

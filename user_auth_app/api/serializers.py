@@ -15,6 +15,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
         }
 
     def save(self):
+        """
+        Creates a new CustomUser instance.
+        """
         pw = self.validated_data['password']
         repeated_pw = self.validated_data['repeated_password']
 
@@ -55,6 +58,9 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
         return value
     
     def save(self):
+        """
+        Change the user's password to the new password.
+        """
         new_pw = self.validated_data['new_password']
         repeated_pw = self.validated_data['repeated_password']
         email = self.validated_data['email']
@@ -68,7 +74,7 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
         return user
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
+class UserProfileDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email', 'confirmed', 'last_login', 'date_joined']

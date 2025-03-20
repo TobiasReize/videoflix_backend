@@ -4,7 +4,7 @@ import datetime, os
 
 
 class Command(BaseCommand):
-    help = 'Exportiert alle Videos als JSON und speichert sie als Backup.'
+    help = 'Exports all videos as JSON and saves them as backup.'
 
     def handle(self, *args, **kwargs):
         dataset = VideoResource().export()

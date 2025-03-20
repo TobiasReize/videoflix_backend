@@ -8,7 +8,7 @@ from rest_framework import status
 from django.utils.timezone import now
 from django.shortcuts import redirect
 import django_rq
-from .serializers import RegistrationSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserProfileSerializer
+from .serializers import RegistrationSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserProfileDetailSerializer
 from user_auth_app.tasks import send_password_reset_email
 from users_app.models import CustomUser
 
@@ -17,6 +17,9 @@ class RegistrationView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        """
+        Creates a new CustomUser instance.
+        """
         serializer = RegistrationSerializer(data=request.data)
         data = {}
 
@@ -39,6 +42,9 @@ class CustomLoginView(ObtainAuthToken):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        """
+        Logs in the current user.
+        """
         serializer = self.serializer_class(data=request.data)
         data = {}
 
@@ -68,14 +74,15 @@ class CustomLoginView(ObtainAuthToken):
 
 class ActivateUserView(APIView):
     def get(self, request, token):
+        """
+        View for activating the user account. Redirect to the login page.
+        """
         try:
             token_obj = Token.objects.get(key=token)
         except:
             return redirect('http://localhost:4200/login?token=false')
 
-        # print('token:', token)
         user = token_obj.user
-        # print('user:', user)
 
         if not user.confirmed:
             user.confirmed = True
@@ -88,6 +95,9 @@ class ForgotPasswordView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        """
+        Send an email to reset the user's password.
+        """
         serializer = ForgotPasswordSerializer(data=request.data)
         data = {}
 
@@ -108,6 +118,9 @@ class ResetPasswordView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        """
+        Change the user's password to the new password.
+        """
         serializer = ResetPasswordSerializer(data=request.data)
         data = {}
 
@@ -122,6 +135,9 @@ class ResetPasswordView(APIView):
             return Response(data, status=resp_status)
 
 
-class UserProfileView(RetrieveAPIView):
+class UserProfileDetailView(RetrieveAPIView):
+    """
+    Shows a single user profile.
+    """
     queryset = CustomUser.objects.all()
-    serializer_class = UserProfileSerializer
+    serializer_class = UserProfileDetailSerializer

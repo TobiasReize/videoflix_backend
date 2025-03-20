@@ -11,5 +11,8 @@ CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 @method_decorator(cache_page(CACHE_TTL), name='dispatch')
 class VideoListView(ListAPIView):
+    """
+    Shows all Video instances in a list.
+    """
     queryset = Video.objects.all()
     serializer_class = VideoListSerializer
