@@ -6,10 +6,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils.timezone import now
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import redirect
 import django_rq
 from .serializers import RegistrationSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserProfileSerializer
-from ..tasks import send_password_reset_email
+from user_auth_app.tasks import send_password_reset_email
 from users_app.models import CustomUser
 
 
@@ -73,9 +73,9 @@ class ActivateUserView(APIView):
         except:
             return redirect('http://localhost:4200/login?token=false')
 
-        print('token:', token)
+        # print('token:', token)
         user = token_obj.user
-        print('user:', user)
+        # print('user:', user)
 
         if not user.confirmed:
             user.confirmed = True

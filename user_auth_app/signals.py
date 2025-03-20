@@ -8,9 +8,9 @@ import django_rq
 
 @receiver(post_save, sender=CustomUser)
 def user_post_save(sender, instance, created, **kwargs):
-    print('User object saved!')
+    # print('User object saved!')
     if created:
-        print('New User created!')
+        # print('New User created!')
         token, created = Token.objects.get_or_create(user=instance)
         queue = django_rq.get_queue('default', autocommit=True)
         queue.enqueue(send_confirmation_email, instance.username, instance.email, token.key)
