@@ -36,6 +36,7 @@ This project is part of the videoflix_frontend.<br/>
 ```
 
 6. Create a Superuser/ Admin:
+(only superuser can add videos)
 ```
     python manage.py createsuperuser
 ```
