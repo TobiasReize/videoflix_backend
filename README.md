@@ -3,10 +3,10 @@
 ## A Django-based backend project for a video streaming platform.<br/>
 Videoflix uses Django and Django Restframework (DRF) to provide individual endpoints, authentication and permissions. PostgreSQL as database and Redis for Caching-Layer. FFmpeg including Django-RQ is used to convert the videos.
 
-This project is part of the videoflix_frontend<br/>
+This project is part of the videoflix_frontend.<br/>
 
 
-## How to install this repository on a Linux server (Backend):
+## How to install this repository on a Linux server:
 
 1. Clone this repository:
 ```
@@ -40,16 +40,21 @@ This project is part of the videoflix_frontend<br/>
     python manage.py createsuperuser
 ```
 
-7. Run the local development server (on path: 127.0.0.1:8000):
+7. Create static files:
+```
+    python manage.py collectstatic
+```
+
+8. Run the local development server (on path: 127.0.0.1:8000):
 ```
     python manage.py runserver
 ```
 
-8. Run background processes:
+9. Run background processes:
 ```
     sudo service redis-server start
     python manage.py rqworker
 ```
 
-9. Start videoflix_frontend:<br/>
+10. Start videoflix_frontend:<br/>
 clone the repository and run the liveserver on path 127.0.0.1:4200
