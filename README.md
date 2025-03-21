@@ -45,16 +45,21 @@ This project is part of the videoflix_frontend.<br/>
     python manage.py collectstatic
 ```
 
-8. Run the local development server (on path: 127.0.0.1:8000):
+8. Install FFmpeg:
+```
+    sudo apt-get install ffmpeg
+```
+
+9. Run the local development server (on path: 127.0.0.1:8000):
 ```
     python manage.py runserver
 ```
 
-9. Run background processes:
+10. Run background processes:
 ```
     sudo service redis-server start
     python manage.py rqworker
 ```
 
-10. Start videoflix_frontend:<br/>
+11. Start videoflix_frontend:<br/>
 clone the repository and run the liveserver on path 127.0.0.1:4200
