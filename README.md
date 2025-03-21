@@ -6,7 +6,7 @@ Videoflix uses Django and Django Restframework (DRF) to provide individual endpo
 This project is part of the videoflix_frontend.<br/>
 
 
-## How to install this repository on a Linux server:
+## How to install this repository on a Linux server or WSL:
 
 1. Clone this repository:
 ```
@@ -20,7 +20,7 @@ This project is part of the videoflix_frontend.<br/>
 
 3. Install the dependencies:
 ```
-    activate the virtual environment
+    activate the virtual environment: source env_lin/bin/activate
     pip install -r requirements.txt
 ```
 
@@ -35,8 +35,7 @@ This project is part of the videoflix_frontend.<br/>
     python manage.py migrate
 ```
 
-6. Create a Superuser/ Admin:
-(only superuser can add videos)
+6. Create a Superuser/ Admin: (only superuser can add videos)
 ```
     python manage.py createsuperuser
 ```
