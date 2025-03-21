@@ -15,7 +15,7 @@ This project is part of the videoflix_frontend.<br/>
 
 2. Create a virtual environment (in the project folder):
 ```
-    python -m venv env_lin
+    python3 -m venv env_lin
 ```
 
 3. Install the dependencies:
@@ -24,41 +24,46 @@ This project is part of the videoflix_frontend.<br/>
     pip install -r requirements.txt
 ```
 
-4. Set the environment variables:
+4. Install packages:
+```
+    sudo apt-get install ffmpeg
+    sudo apt-get install redis
+    sudo apt install postgresql postgresql-contrib
+```
+(--> edit password in redis.conf)</br>
+(--> set up postgres database)
+
+5. Set the environment variables:
 ```
     rename the .env-template file to .env and fill out the environment variables
 ```
 
-5. Apply migrations:
+6. Run background processes:
+```
+    sudo service redis-server start
+    sudo service postgresql start
+    python manage.py rqworker
+```
+
+7. Apply migrations:
 ```
     python manage.py makemigrations
     python manage.py migrate
 ```
 
-6. Create a Superuser/ Admin: (only superuser can add videos)
+8. Create a Superuser/ Admin: (only superuser can add videos)
 ```
     python manage.py createsuperuser
 ```
 
-7. Create static files:
+9. Create static files:
 ```
     python manage.py collectstatic
 ```
 
-8. Install FFmpeg:
-```
-    sudo apt-get install ffmpeg
-```
-
-9. Run the local development server (on path: 127.0.0.1:8000):
+10. Run the local development server (on path: 127.0.0.1:8000):
 ```
     python manage.py runserver
-```
-
-10. Run background processes:
-```
-    sudo service redis-server start
-    python manage.py rqworker
 ```
 
 11. Start videoflix_frontend:<br/>
