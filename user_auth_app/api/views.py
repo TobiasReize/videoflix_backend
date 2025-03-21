@@ -11,6 +11,7 @@ import django_rq
 from .serializers import RegistrationSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserProfileDetailSerializer
 from user_auth_app.tasks import send_password_reset_email
 from users_app.models import CustomUser
+from shared.permission import IsOwnerOrAdmin
 
 
 class RegistrationView(APIView):
@@ -137,7 +138,8 @@ class ResetPasswordView(APIView):
 
 class UserProfileDetailView(RetrieveAPIView):
     """
-    Shows a single user profile.
+    Shows a single user profile, only for the owner or admin.
     """
     queryset = CustomUser.objects.all()
     serializer_class = UserProfileDetailSerializer
+    permission_classes = [IsOwnerOrAdmin]
