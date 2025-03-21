@@ -1,5 +1,6 @@
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+import os
 
 
 def send_confirmation_email(username, email, token):
@@ -7,7 +8,7 @@ def send_confirmation_email(username, email, token):
     Sends a confirmation email to activate the newly created account.
     """
     subject = 'Confirm your email'
-    from_email = '"Videoflix" <info@videoflix.tobias-reize.de>'
+    from_email = os.getenv('DEFAULT_EMAIL')
     recipient_list = [email]
     confirmation_link = f'http://127.0.0.1:8000/api/auth/activate/{token}'
     
@@ -24,7 +25,7 @@ def send_password_reset_email(email):
     Sends a password reset email.
     """
     subject = 'Reset your password'
-    from_email = '"Videoflix" <info@videoflix.tobias-reize.de>'
+    from_email = os.getenv('DEFAULT_EMAIL')
     recipient_list = [email]
     confirmation_link = f'http://localhost:4200/reset-password?email={email}'
 
