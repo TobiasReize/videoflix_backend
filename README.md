@@ -5,6 +5,8 @@ Videoflix uses Django and Django Restframework (DRF) to provide individual endpo
 
 This project is part of the videoflix_frontend.<br/>
 
+## Prerequisites:
+`Python version >= 3.10`
 
 ## How to install this repository on a Linux server or WSL:
 
