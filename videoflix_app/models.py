@@ -4,6 +4,9 @@ from os.path import splitext
 
 
 def validate_thumbnail(value):
+    """
+    Ensures that only images can be uploaded.
+    """
     ext = splitext(value.name)[1]
     valid_extensions = ['.jpg', '.jpeg', '.png', '.gif']
     if not ext.lower() in valid_extensions:
@@ -11,15 +14,25 @@ def validate_thumbnail(value):
 
 
 def validate_video_file(value):
+    """
+    Ensures that only mp4 files can be uploaded.
+    """
     ext = splitext(value.name)[1]
     if ext.lower() != '.mp4':
         raise ValidationError('Only mp4 files are allowed!')
 
 
+class Genre(models.Model):
+    name = models.CharField(max_length=25, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Video(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=255)
-    genres = models.JSONField()
+    genres = models.ManyToManyField(Genre, blank=False, related_name='video')
     thumbnail = models.FileField(upload_to='images/', blank=True, null=True, validators=[validate_thumbnail])
     video_file = models.FileField(upload_to='videos/', blank=True, null=True, validators=[validate_video_file])
     created_at = models.DateTimeField(auto_now_add=True)
