@@ -9,6 +9,7 @@ env_lin/
 
 # Visual Studio Code # 
 .vscode/*
+.vscode/
 
 # Other
 *.pyc
