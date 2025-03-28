@@ -26,7 +26,7 @@ MEDIA_URL = '/media/'
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'test_key_for_development')
+SECRET_KEY = os.getenv('SECRET_KEY', 'test_key_for_development-1A-2b_3C')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -115,9 +115,9 @@ WSGI_APPLICATION = 'videoflix_backend.wsgi.application'
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.postgresql',
-		'NAME': 'videoflix_db',
-		'USER': os.getenv('DATABASES_USER'),
-		'PASSWORD': os.getenv('DATABASES_PASSWORD'),
+		'NAME': os.getenv('DATABASES_NAME', 'videoflix_db'),
+		'USER': os.getenv('DATABASES_USER', 'videoflix'),
+		'PASSWORD': os.getenv('DATABASES_PASSWORD', '1a23Bc!4gh'),
 		'HOST': 'localhost',
 		'PORT': '',
 	}
@@ -126,11 +126,12 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': os.getenv('CACHES_LOCATION'),
+        'LOCATION': os.getenv('CACHES_LOCATION', 'redis://127.0.0.1:6379/1'),
         'OPTIONS': {
-            'PASSWORD': os.getenv('CACHES_PASSWORD'),
+            'PASSWORD': os.getenv('CACHES_PASSWORD', '1a63Bc!4g8h'),
             'CLIENT_CLASS': 'django_redis.client.DefaultClient'
         },
+        'TIMEOUT': 30,
         'KEY_PREFIX': 'videoflix'
     }
 }
@@ -140,9 +141,9 @@ CACHE_TTL = 60 * 15
 RQ_QUEUES = {
     'default': {
         'HOST': 'localhost',
-        'PORT': os.getenv('RQ_QUEUES_PORT'),
+        'PORT': os.getenv('RQ_QUEUES_PORT', '6379'),
         'DB': 0,
-        'PASSWORD': os.getenv('CACHES_PASSWORD'),
+        'PASSWORD': os.getenv('RQ_QUEUES_PASSWORD', '5A63Bc_3g8h'),
         'DEFAULT_TIMEOUT': 360,
     }
 }
@@ -205,12 +206,12 @@ REST_FRAMEWORK = {
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'server.com')
 EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.getenv('EMAIL_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_EMAIL')
+EMAIL_PORT = os.getenv('EMAIL_PORT', 123)
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'videoflix@user.de')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '123abcGHJ')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'info@videoflix.de')
 
 # Static file serving.
 # https://whitenoise.readthedocs.io/en/stable/django.html#add-compression-and-caching-support
