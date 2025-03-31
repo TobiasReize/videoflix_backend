@@ -31,7 +31,11 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'test_key_for_development-1A-2b_3C')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    '49.13.218.194',
+    'videoflix_backend.tobias-reize.de'
+]
 
 INTERNAL_IPS = ['127.0.0.1']
 
@@ -68,17 +72,19 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'videoflix_backend.middleware.AcceptRangesMiddleware',  # for development
+    # 'videoflix_backend.middleware.AcceptRangesMiddleware',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:4200',
-    'http://localhost:4200'
+    'http://localhost:4200',
+    'http://videoflix.tobias-reize.de'
 ]
 
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:4200',
-    'http://localhost:4200'
+    'http://localhost:4200',
+    'http://videoflix.tobias-reize.de'
 ]
 
 ROOT_URLCONF = 'videoflix_backend.urls'
@@ -104,13 +110,6 @@ WSGI_APPLICATION = 'videoflix_backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
-#}
 
 DATABASES = {
 	'default': {
