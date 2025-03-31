@@ -78,13 +78,15 @@ MIDDLEWARE = [
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:4200',
     'http://localhost:4200',
-    'http://videoflix.tobias-reize.de'
+    'http://videoflix.tobias-reize.de',
+    'http://videoflix_backend.tobias-reize.de'
 ]
 
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:4200',
     'http://localhost:4200',
-    'http://videoflix.tobias-reize.de'
+    'http://videoflix.tobias-reize.de',
+    'http://videoflix_backend.tobias-reize.de'
 ]
 
 ROOT_URLCONF = 'videoflix_backend.urls'
