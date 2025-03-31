@@ -29,7 +29,7 @@ This project is part of the videoflix_frontend.<br/>
 4. Install packages:
 ```
     sudo apt-get install ffmpeg
-    sudo apt-get install redis
+    sudo apt install redis-server
     sudo apt install postgresql postgresql-contrib
 ```
 (--> edit password in redis.conf)</br>
