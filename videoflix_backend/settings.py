@@ -34,7 +34,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1',
     '49.13.218.194',
-    'videoflix_backend.tobias-reize.de'
+    'videoflix-backend.tobias-reize.de'
 ]
 
 INTERNAL_IPS = ['127.0.0.1']
@@ -79,14 +79,14 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:4200',
     'http://localhost:4200',
     'http://videoflix.tobias-reize.de',
-    'http://videoflix_backend.tobias-reize.de'
+    'http://videoflix-backend.tobias-reize.de'
 ]
 
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:4200',
     'http://localhost:4200',
     'http://videoflix.tobias-reize.de',
-    'http://videoflix_backend.tobias-reize.de'
+    'http://videoflix-backend.tobias-reize.de'
 ]
 
 ROOT_URLCONF = 'videoflix_backend.urls'
