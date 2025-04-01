@@ -29,7 +29,15 @@ MEDIA_URL = '/media/'
 SECRET_KEY = os.getenv('SECRET_KEY', 'test_key_for_development-1A-2b_3C')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+
+SESSION_COOKIE_SECURE = True 
+CSRF_COOKIE_SECURE = True
+
+# HSTS settings
+SECURE_HSTS_SECONDS = 1209600 # 2 weeks 
+SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_INCLUDE_SUBDOMAIN = True
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
@@ -80,14 +88,14 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:4200',
     'http://localhost:4200',
     'https://videoflix.tobias-reize.de',
-    'http://videoflix-backend.tobias-reize.de'
+    'https://videoflix-backend.tobias-reize.de'
 ]
 
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:4200',
     'http://localhost:4200',
     'https://videoflix.tobias-reize.de',
-    'http://videoflix-backend.tobias-reize.de'
+    'https://videoflix-backend.tobias-reize.de'
 ]
 
 ROOT_URLCONF = 'videoflix_backend.urls'
