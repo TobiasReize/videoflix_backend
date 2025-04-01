@@ -73,7 +73,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'videoflix_backend.middleware.AcceptRangesMiddleware',
+    'videoflix_backend.middleware.AcceptRangesMiddleware',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
