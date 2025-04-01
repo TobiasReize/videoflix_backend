@@ -81,7 +81,7 @@ class ActivateUserView(APIView):
         try:
             token_obj = Token.objects.get(key=token)
         except:
-            return redirect('http://localhost:4200/login?token=false')
+            return redirect('https://videoflix.tobias-reize.de/login?token=false')
 
         user = token_obj.user
 
@@ -89,7 +89,7 @@ class ActivateUserView(APIView):
             user.confirmed = True
             user.save(update_fields=['confirmed'])
         
-        return redirect('http://localhost:4200/login?confirmed=true')
+        return redirect('https://videoflix.tobias-reize.de/login?confirmed=true')
 
 
 class ForgotPasswordView(APIView):

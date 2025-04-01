@@ -10,7 +10,7 @@ def send_confirmation_email(username, email, token):
     subject = 'Confirm your email'
     from_email = os.getenv('DEFAULT_FROM_EMAIL')
     recipient_list = [email]
-    confirmation_link = f'http://127.0.0.1:8000/api/auth/activate/{token}'
+    confirmation_link = f'https://videoflix-backend.tobias-reize.de/api/auth/activate/{token}'
     
     text_content = render_to_string('emails/confirmation_email.txt', context={'username': username, 'confirmation_link': confirmation_link})
     html_content = render_to_string('emails/confirmation_email.html', context={'username': username, 'confirmation_link': confirmation_link})
@@ -27,7 +27,7 @@ def send_password_reset_email(email):
     subject = 'Reset your password'
     from_email = os.getenv('DEFAULT_FROM_EMAIL')
     recipient_list = [email]
-    confirmation_link = f'http://localhost:4200/reset-password?email={email}'
+    confirmation_link = f'https://videoflix.tobias-reize.de/reset-password?email={email}'
 
     text_content = render_to_string('emails/reset_password_email.txt', context={'email': email,'confirmation_link': confirmation_link})
     html_content = render_to_string('emails/reset_password_email.html', context={'email': email, 'confirmation_link': confirmation_link})
