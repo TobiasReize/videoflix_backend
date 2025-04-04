@@ -29,22 +29,25 @@ MEDIA_URL = '/media/'
 SECRET_KEY = os.getenv('SECRET_KEY', 'test_key_for_development-1A-2b_3C')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-SESSION_COOKIE_SECURE = True 
-CSRF_COOKIE_SECURE = True
+if DEBUG:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:4200', 'http://localhost:4200']
+    CORS_ALLOWED_ORIGINS = ['http://127.0.0.1:4200', 'http://localhost:4200']
+else:
+    ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
+    SESSION_COOKIE_SECURE = True 
+    CSRF_COOKIE_SECURE = True
 
-# HSTS settings
-SECURE_HSTS_SECONDS = 1209600 # 2 weeks 
-SECURE_HSTS_PRELOAD = True
-SECURE_HSTS_INCLUDE_SUBDOMAIN = True
+    # HSTS settings
+    SECURE_HSTS_SECONDS = 1209600 # 2 weeks 
+    SECURE_HSTS_PRELOAD = True
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    
+    CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS').split(',')
+    CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS').split(',')
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    '49.13.218.194',
-    'videoflix-backend.tobias-reize.de',
-    'videoflix.tobias-reize.de'
-]
 
 INTERNAL_IPS = ['127.0.0.1']
 
@@ -82,20 +85,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'videoflix_backend.middleware.AcceptRangesMiddleware',
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    'http://127.0.0.1:4200',
-    'http://localhost:4200',
-    'https://videoflix.tobias-reize.de',
-    'https://videoflix-backend.tobias-reize.de'
-]
-
-CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:4200',
-    'http://localhost:4200',
-    'https://videoflix.tobias-reize.de',
-    'https://videoflix-backend.tobias-reize.de'
 ]
 
 ROOT_URLCONF = 'videoflix_backend.urls'
