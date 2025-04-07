@@ -14,6 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 load_dotenv()
 
@@ -227,6 +228,7 @@ STORAGES = {
 # Sentry
 sentry_sdk.init(
     dsn= os.getenv('SENTRY_dns', ''),
+    integrations=[DjangoIntegration()],
     send_default_pii=True,
     traces_sample_rate=1.0,
     profile_session_sample_rate=1.0,
