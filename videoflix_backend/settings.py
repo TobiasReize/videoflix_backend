@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import sentry_sdk
 
 load_dotenv()
 
@@ -222,3 +223,12 @@ STORAGES = {
         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
     },
 }
+
+# Sentry
+sentry_sdk.init(
+    dsn= os.getenv('SENTRY_dns', ''),
+    send_default_pii=True,
+    traces_sample_rate=1.0,
+    profile_session_sample_rate=1.0,
+    profile_lifecycle='trace',
+)
