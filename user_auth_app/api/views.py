@@ -1,14 +1,15 @@
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView
-from rest_framework.authtoken.views import ObtainAuthToken
+# from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.utils.timezone import now
 from django.shortcuts import redirect
 import django_rq
-from .serializers import RegistrationSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserProfileDetailSerializer
+from .serializers import RegistrationSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserProfileDetailSerializer, CustomTokenObtainPairSerializer
 from user_auth_app.tasks import send_password_reset_email
 from users_app.models import CustomUser
 from shared.permission import IsOwnerOrAdmin
@@ -26,10 +27,9 @@ class RegistrationView(APIView):
 
         if serializer.is_valid():
             saved_account = serializer.save()
-            token = Token.objects.get(user=saved_account)
             data = {
-                'token': token.key,
                 'email': saved_account.email,
+                'username': saved_account.username,
                 'user_id': saved_account.id
             }
             resp_status = status.HTTP_201_CREATED
@@ -39,38 +39,38 @@ class RegistrationView(APIView):
         return Response(data, status=resp_status)
 
 
-class CustomLoginView(ObtainAuthToken):
-    permission_classes = [AllowAny]
+# class CustomLoginView(ObtainAuthToken):
+#     permission_classes = [AllowAny]
 
-    def post(self, request):
-        """
-        Logs in the current user.
-        """
-        serializer = self.serializer_class(data=request.data)
-        data = {}
+#     def post(self, request):
+#         """
+#         Logs in the current user.
+#         """
+#         serializer = self.serializer_class(data=request.data)
+#         data = {}
 
-        if serializer.is_valid():
-            user = serializer.validated_data['user']
+#         if serializer.is_valid():
+#             user = serializer.validated_data['user']
             
-            if not user.confirmed:
-                data = {
-                    'msg': ['Your account has not been activated yet!'],
-                }
-                resp_status = status.HTTP_403_FORBIDDEN
-            else:
-                user.last_login = now()
-                user.save(update_fields=['last_login'])
-                token, created = Token.objects.get_or_create(user=user)
-                data = {
-                    'token': token.key,
-                    'email': user.email,
-                    'user_id': user.id
-                }
-                resp_status = status.HTTP_200_OK
-        else:
-            data = serializer.errors
-            resp_status = status.HTTP_400_BAD_REQUEST
-        return Response(data, status=resp_status)
+#             if not user.confirmed:
+#                 data = {
+#                     'msg': ['Your account has not been activated yet!'],
+#                 }
+#                 resp_status = status.HTTP_403_FORBIDDEN
+#             else:
+#                 user.last_login = now()
+#                 user.save(update_fields=['last_login'])
+#                 token, created = Token.objects.get_or_create(user=user)
+#                 data = {
+#                     'token': token.key,
+#                     'email': user.email,
+#                     'user_id': user.id
+#                 }
+#                 resp_status = status.HTTP_200_OK
+#         else:
+#             data = serializer.errors
+#             resp_status = status.HTTP_400_BAD_REQUEST
+#         return Response(data, status=resp_status)
 
 
 class ActivateUserView(APIView):
@@ -143,3 +143,50 @@ class UserProfileDetailView(RetrieveAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserProfileDetailSerializer
     permission_classes = [IsOwnerOrAdmin]
+
+
+class CookieTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+    
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = CustomUser.objects.get(email=request.data['email'])
+
+            if not user.confirmed:
+                data = {'msg': ['Your account has not been activated yet!']}
+                resp_status = status.HTTP_403_FORBIDDEN
+                return Response(data, status=resp_status)
+            else:
+                user.last_login = now()
+                user.save(update_fields=['last_login'])
+                access = serializer.validated_data['access']
+                refresh = serializer.validated_data['refresh']
+                response = Response({'msg': 'Login erfolgreich!'})
+                response.set_cookie(key='access_token', value=str(access), httponly=True, secure=True, samesite='None')
+                response.set_cookie(key='refresh_token', value=str(refresh), httponly=True, secure=True, samesite='None')
+                return response
+        else:
+            data = serializer.errors
+            resp_status = status.HTTP_400_BAD_REQUEST
+            return Response(data, status=resp_status)
+
+
+class CookieTokenRefreshView(TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get('refresh_token')
+        
+        if refresh_token is None:
+            return Response({'detail': 'Refresh token not found!'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = self.get_serializer(data={'refresh': refresh_token})
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except:
+            return Response({'detail': 'Refresh token invalid!'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        access_token = serializer.validated_data.get('access')
+        response = Response({'message': 'Access Token refreshed!'})
+        response.set_cookie(key='access_token', value=access_token, httponly=True, secure=True, samesite='None')
+        return response

@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+from datetime import timedelta
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -37,6 +38,7 @@ if DEBUG:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
     CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:4200', 'http://localhost:4200']
     CORS_ALLOWED_ORIGINS = ['http://127.0.0.1:4200', 'http://localhost:4200']
+    CORS_ALLOW_CREDENTIALS = True
 else:
     ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
     SESSION_COOKIE_SECURE = True 
@@ -49,6 +51,7 @@ else:
     
     CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS').split(',')
     CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS').split(',')
+    CORS_ALLOW_CREDENTIALS = True
 
 
 INTERNAL_IPS = ['127.0.0.1']
@@ -66,7 +69,7 @@ INSTALLED_APPS = [
     'user_auth_app.apps.UserAuthAppConfig',
     'users_app',
     'rest_framework',
-    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     'debug_toolbar',
     'django_rq',
     'import_export',
@@ -200,17 +203,22 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication'
+        'user_auth_app.authentication.CookieJWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
     ],
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '20/day',
+        'anon': '30/day',
         'user': '100/day'
     }
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1)
 }
 
 # Email

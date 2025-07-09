@@ -1,10 +1,11 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from users_app.models import CustomUser
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
     repeated_password = serializers.CharField(write_only=True)
-    
+
     class Meta:
         model = CustomUser
         fields = ['email', 'password', 'repeated_password']
@@ -14,20 +15,25 @@ class RegistrationSerializer(serializers.ModelSerializer):
             }
         }
 
+    def validate_email(self, value):
+        if CustomUser.objects.filter(email=value).exists():
+            raise serializers.ValidationError({'msg': ['Email already exists!']})
+        return value
+
+    def validate_repeated_password(self, value):
+        password = self.initial_data.get('password')
+        if password and value and password != value:
+            raise serializers.ValidationError({'msg': ['Passwords don\'t match']})
+        return value
+
     def save(self):
         """
         Creates a new CustomUser instance.
         """
         pw = self.validated_data['password']
-        repeated_pw = self.validated_data['repeated_password']
-
-        if pw != repeated_pw:
-            raise serializers.ValidationError({'msg': ['Passwords don\'t match']})
-        
-        if CustomUser.objects.filter(email=self.validated_data['email']).exists():
-            raise serializers.ValidationError({'msg': ['Email already exists!']})
-        
-        account = CustomUser(email=self.validated_data['email'], username=self.validated_data['email'])
+        email = self.validated_data['email']
+        username = email.split('@')[0]
+        account = CustomUser(email=email, username=username)
         account.set_password(pw)
         account.save()
         return account
@@ -78,3 +84,28 @@ class UserProfileDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email', 'confirmed', 'last_login', 'date_joined']
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'username' in self.fields:
+            self.fields.pop('username')
+
+    def validate(self, values):
+        email = values.get('email')
+        password = values.get('password')
+
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            raise serializers.ValidationError({'msg': ['Invalid email or password!']})
+
+        if not user.check_password(password):
+            raise serializers.ValidationError({'msg': ['Invalid email or password!']})
+        
+        data = super().validate({'username': user.username, 'password': password})
+        return data
