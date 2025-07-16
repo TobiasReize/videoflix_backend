@@ -1,15 +1,14 @@
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView
-# from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from django.utils.timezone import now
 from django.shortcuts import redirect
 import django_rq
 from .serializers import RegistrationSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserProfileDetailSerializer, CustomTokenObtainPairSerializer
+from ..models import EmailVerificationToken
 from user_auth_app.tasks import send_password_reset_email
 from users_app.models import CustomUser
 from shared.permission import IsOwnerOrAdmin
@@ -75,21 +74,21 @@ class RegistrationView(APIView):
 
 class ActivateUserView(APIView):
     def get(self, request, token):
-        """
-        View for activating the user account. Redirect to the login page.
-        """
         try:
-            token_obj = Token.objects.get(key=token)
-        except:
-            return redirect('https://videoflix.tobias-reize.de/login?token=false')
+            token_obj = EmailVerificationToken.objects.get(token=token)
+            user = token_obj.user
 
-        user = token_obj.user
+            if token_obj.is_expired():
+                user.delete()
+                return redirect('https://videoflix.tobias-reize.de/login?token=expired')
 
-        if not user.confirmed:
             user.confirmed = True
             user.save(update_fields=['confirmed'])
-        
-        return redirect('https://videoflix.tobias-reize.de/login?confirmed=true')
+            token_obj.delete()
+            return redirect('https://videoflix.tobias-reize.de/login?confirmed=true')
+
+        except EmailVerificationToken.DoesNotExist:
+            return redirect('https://videoflix.tobias-reize.de/login?token=invalid')
 
 
 class ForgotPasswordView(APIView):
@@ -189,4 +188,25 @@ class CookieTokenRefreshView(TokenRefreshView):
         access_token = serializer.validated_data.get('access')
         response = Response({'message': 'Access Token refreshed!'})
         response.set_cookie(key='access_token', value=access_token, httponly=True, secure=True, samesite='None')
+        return response
+
+
+class CustomTokenVerifyView(TokenVerifyView):
+    def post(self, request, *args, **kwargs):
+        access_token = request.COOKIES.get('access_token')
+        serializer = self.get_serializer(data={'token': access_token})
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except:
+            return Response({'message': 'Access Token expired!'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'message': 'Access Token valid!'}, status=status.HTTP_200_OK)
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        response = Response({'message': 'Logout successful.'})
+        response.delete_cookie('access_token')
+        response.delete_cookie('refresh_token')
         return response
