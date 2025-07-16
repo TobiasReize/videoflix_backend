@@ -190,7 +190,17 @@ STATIC_ROOT = BASE_DIR / 'static'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Static file serving.
+# https://whitenoise.readthedocs.io/en/stable/django.html#add-compression-and-caching-support
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -216,10 +226,12 @@ REST_FRAMEWORK = {
     }
 }
 
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1)
 }
+
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -231,16 +243,6 @@ EMAIL_USE_TLS= os.getenv('EMAIL_USE_TLS', default=True)
 EMAIL_USE_SSL= os.getenv('EMAIL_USE_SSL', default=False)
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', default='info@videoflix.de')
 
-# Static file serving.
-# https://whitenoise.readthedocs.io/en/stable/django.html#add-compression-and-caching-support
-# STORAGES = {
-#     'default': {
-#         'BACKEND': 'django.core.files.storage.FileSystemStorage',
-#     },
-#     'staticfiles': {
-#         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
-#     },
-# }
 
 # Sentry
 sentry_sdk.init(
