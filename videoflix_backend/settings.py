@@ -22,14 +22,11 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'test_key_for_development-1A-2b_3C')
+SECRET_KEY = os.getenv('SECRET_KEY', default='django-insecure-@#x5h3zj!g+8g1v@2^b6^9$8&f1r7g$@t3v!p4#=g0r5qzj4m3')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
@@ -40,17 +37,16 @@ if DEBUG:
     CORS_ALLOWED_ORIGINS = ['http://127.0.0.1:4200', 'http://localhost:4200']
     CORS_ALLOW_CREDENTIALS = True
 else:
-    ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
+    ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='localhost').split(',')
     SESSION_COOKIE_SECURE = True 
     CSRF_COOKIE_SECURE = True
 
-    # HSTS settings
     SECURE_HSTS_SECONDS = 1209600 # 2 weeks 
     SECURE_HSTS_PRELOAD = True
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     
-    CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS').split(',')
-    CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS').split(',')
+    CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', default='http://localhost:4200').split(',')
+    CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', default='http://localhost:4200').split(',')
     CORS_ALLOW_CREDENTIALS = True
 
 
@@ -119,20 +115,19 @@ WSGI_APPLICATION = 'videoflix_backend.wsgi.application'
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.postgresql',
-		'NAME': os.getenv('DATABASES_NAME', 'videoflix_db'),
-		'USER': os.getenv('DATABASES_USER', 'videoflix'),
-		'PASSWORD': os.getenv('DATABASES_PASSWORD', '1a23Bc!4gh'),
-		'HOST': 'localhost',
-		'PORT': '',
+		'NAME': os.getenv('DB_NAME', default='videoflix_db'),
+		'USER': os.getenv('DB_USER', default='videoflix_user'),
+		'PASSWORD': os.getenv('DB_PASSWORD', default='supersecretpassword'),
+        'HOST': os.getenv('DB_HOST', default='db'),
+        'PORT': os.getenv('DB_PORT', default=5432)
 	}
 }
 
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': os.getenv('CACHES_LOCATION', 'redis://127.0.0.1:6379/1'),
+        'LOCATION': os.getenv('REDIS_LOCATION', default='redis://redis:6379/1'),
         'OPTIONS': {
-            'PASSWORD': os.getenv('CACHES_PASSWORD', '1a63Bc!4g8h'),
             'CLIENT_CLASS': 'django_redis.client.DefaultClient'
         },
         'TIMEOUT': 30,
@@ -144,11 +139,11 @@ CACHE_TTL = 60 * 15
 
 RQ_QUEUES = {
     'default': {
-        'HOST': 'localhost',
-        'PORT': os.getenv('RQ_QUEUES_PORT', '6379'),
-        'DB': 0,
-        'PASSWORD': os.getenv('RQ_QUEUES_PASSWORD', '5A63Bc_3g8h'),
-        'DEFAULT_TIMEOUT': 360,
+        'HOST': os.getenv('REDIS_HOST', default='redis'),
+        'PORT': os.getenv('REDIS_PORT', default=6379),
+        'DB': os.getenv('REDIS_DB', default=0),
+        'DEFAULT_TIMEOUT': 900,
+        'REDIS_CLIENT_KWARGS': {},
     }
 }
 
@@ -190,7 +185,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/staticfiles')
+STATIC_ROOT = BASE_DIR / 'static'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -223,23 +223,24 @@ SIMPLE_JWT = {
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'server.com')
-EMAIL_USE_TLS = True
-EMAIL_PORT = os.getenv('EMAIL_PORT', 123)
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'videoflix@user.de')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '123abcGHJ')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'info@videoflix.de')
+EMAIL_HOST = os.getenv('EMAIL_HOST', default='server.com')
+EMAIL_PORT = os.getenv('EMAIL_PORT', default=123)
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', default='videoflix@user.de')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', default='123abcGHJ')
+EMAIL_USE_TLS= os.getenv('EMAIL_USE_TLS', default=True)
+EMAIL_USE_SSL= os.getenv('EMAIL_USE_SSL', default=False)
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', default='info@videoflix.de')
 
 # Static file serving.
 # https://whitenoise.readthedocs.io/en/stable/django.html#add-compression-and-caching-support
-STORAGES = {
-    'default': {
-        'BACKEND': 'django.core.files.storage.FileSystemStorage',
-    },
-    'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
-    },
-}
+# STORAGES = {
+#     'default': {
+#         'BACKEND': 'django.core.files.storage.FileSystemStorage',
+#     },
+#     'staticfiles': {
+#         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+#     },
+# }
 
 # Sentry
 sentry_sdk.init(
