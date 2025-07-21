@@ -10,11 +10,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+
   redis:
     image: redis:latest
     container_name: videoflix_redis
     volumes:
       - redis_data:/data
+
 
   web:
     build:
@@ -32,8 +34,24 @@ services:
     depends_on:
       - db
       - redis
+    entrypoint: ./backend.entrypoint.sh
 
 
+  worker:
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    env_file: .env
+    container_name: videoflix_worker
+    
+    volumes:
+      - .:/app
+      - videoflix_media:/app/media
+      - videoflix_static:/app/static
+    depends_on:
+      - redis
+      - db
+    entrypoint: ./worker.entrypoint.sh
 
 
 volumes:
