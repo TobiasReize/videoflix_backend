@@ -1,11 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.timezone import now
 from django.shortcuts import redirect
+from django.core.cache import cache
 import django_rq
 from .serializers import RegistrationSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserProfileDetailSerializer, CustomTokenObtainPairSerializer
 from ..models import EmailVerificationToken
@@ -205,8 +207,19 @@ class CustomTokenVerifyView(TokenVerifyView):
 
 
 class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
-        response = Response({'message': 'Logout successful.'})
-        response.delete_cookie('access_token')
-        response.delete_cookie('refresh_token')
+        try:
+            refresh_token = request.COOKIES.get('refresh_token')
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        cache_key = f"video_list_user_{request.user.id}"
+        cache.delete(cache_key)
+        response = Response({'message': 'Logout successful.'}, status=status.HTTP_200_OK)
+        response.delete_cookie(key='access_token', path='/', samesite='None')
+        response.delete_cookie(key='refresh_token', path='/', samesite='None')
         return response
