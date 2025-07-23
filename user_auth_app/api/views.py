@@ -8,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.timezone import now
 from django.shortcuts import redirect
 from django.core.cache import cache
+from django.conf import settings
 import django_rq
 from .serializers import RegistrationSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserProfileDetailSerializer, CustomTokenObtainPairSerializer
 from ..models import EmailVerificationToken
@@ -82,15 +83,15 @@ class ActivateUserView(APIView):
 
             if token_obj.is_expired():
                 user.delete()
-                return redirect('https://videoflix.tobias-reize.de/login?token=expired')
+                return redirect(settings.BASE_URL_FRONT + 'login?token=expired')
 
             user.confirmed = True
             user.save(update_fields=['confirmed'])
             token_obj.delete()
-            return redirect('https://videoflix.tobias-reize.de/login?confirmed=true')
+            return redirect(settings.BASE_URL_FRONT + 'login?confirmed=true')
 
         except EmailVerificationToken.DoesNotExist:
-            return redirect('https://videoflix.tobias-reize.de/login?token=invalid')
+            return redirect(settings.BASE_URL_FRONT + 'login?token=invalid')
 
 
 class ForgotPasswordView(APIView):

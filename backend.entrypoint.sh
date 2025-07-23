@@ -31,7 +31,7 @@ User = get_user_model()
 username = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'admin')
 email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@example.com')
 password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'adminpassword')
-confirmed = os.environ.get('CONFIRMED', False)
+confirmed = os.environ.get('CONFIRMED', 'False') == 'True'
 
 if not User.objects.filter(username=username).exists():
     print(f"Creating superuser '{username}'...")

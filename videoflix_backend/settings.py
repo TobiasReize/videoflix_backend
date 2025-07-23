@@ -32,11 +32,15 @@ SECRET_KEY = os.getenv('SECRET_KEY', default='django-insecure-@#x5h3zj!g+8g1v@2^
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 if DEBUG:
+    BASE_URL_FRONT = 'http://localhost:4200/'
+    BASE_URL_BACK = 'http://localhost:8000/'
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
     CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:4200', 'http://localhost:4200']
     CORS_ALLOWED_ORIGINS = ['http://127.0.0.1:4200', 'http://localhost:4200']
     CORS_ALLOW_CREDENTIALS = True
 else:
+    BASE_URL = os.getenv('BASE_URL_FRONT', default='http://localhost:4200/')
+    BASE_URL = os.getenv('BASE_URL_BACK', default='http://localhost:8000/')
     ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='localhost').split(',')
     SESSION_COOKIE_SECURE = True 
     CSRF_COOKIE_SECURE = True
@@ -242,8 +246,8 @@ EMAIL_HOST = os.getenv('EMAIL_HOST', default='server.com')
 EMAIL_PORT = os.getenv('EMAIL_PORT', default=123)
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', default='videoflix@user.de')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', default='123abcGHJ')
-EMAIL_USE_TLS= os.getenv('EMAIL_USE_TLS', default=True)
-EMAIL_USE_SSL= os.getenv('EMAIL_USE_SSL', default=False)
+EMAIL_USE_TLS= os.getenv('EMAIL_USE_TLS', default='True') == 'True'
+EMAIL_USE_SSL= os.getenv('EMAIL_USE_SSL', default='False') == 'True'
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', default='info@videoflix.de')
 
 
